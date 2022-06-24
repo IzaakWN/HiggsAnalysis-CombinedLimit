@@ -21,15 +21,19 @@ public:
 
 protected:
   std::string nameForLabel(const char *label) ;
+  bool ignore(const char *label) ;
 
   static float mu_;
   static bool  fixedMu_;
 
+  static bool doPval_;
   static bool runMinos_;
   static bool saveFitResult_;
 
   static std::vector<std::string> groups_;
+  static std::vector<std::string> ignore_;
   static std::map<TString,std::pair<double,double>> groupRanges_;
+  static std::map<TString,double> pvals_;
 
   virtual bool runSpecific(RooWorkspace *w, RooStats::ModelConfig *mc_s, RooStats::ModelConfig *mc_b, RooAbsData &data, double &limit, double &limitErr, const double *hint);
 };
