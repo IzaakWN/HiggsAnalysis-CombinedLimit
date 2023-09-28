@@ -127,6 +127,12 @@
                         
                             
 <li >
+    <a href="../simplifiedlikelihood/">Simplified Likelihoods</a>
+</li>
+
+                        
+                            
+<li >
     <a href="../regularisation/">Unfolding & regularization</a>
 </li>
 
@@ -176,6 +182,12 @@
 </li>
 
                         
+                            
+<li >
+    <a href="../../tutorial2023/parametric_exercise/">Exercise: parametric fit</a>
+</li>
+
+                        
                         </ul>
                     </li>
                 
@@ -199,7 +211,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/edit/102x/docs/part3/runningthetool.md"><i class="fab fa-github"></i> Edit on GitHub</a>
+                        <a href="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/edit/main/docs/part3/runningthetool.md"><i class="fab fa-github"></i> Edit on GitHub</a>
                     </li>
             </ul>
         </div>
@@ -325,6 +337,7 @@
 </ul>
 </li>
 </ul>
+<p>By default, the dataset used by combine will be the one pointed to in the datacard. You can tell combine to use a different dataset (for example a toy one that you generated) by using the option <code>--dataset</code>. The argument should be <code>rootfile.root:workspace:location</code> or <code>rootfile.root:location</code>. In order to use this option, you must first convert your datacard to a binary workspace and use this binary workspace as the input to the command line. </p>
 <h4 id="generic-minimizer-options">Generic Minimizer Options</h4>
 <p>Combine uses its own minimizer class which is used to steer Minuit (via RooMinimizer) named the <code>CascadeMinimizer</code>. This allows for sequential minimization which can help in case a particular setting/algo fails. Also, the <code>CascadeMinimizer</code> knows about extra features of Combine such as <em>discrete</em> nuisance parameters.</p>
 <p>All of the fits which are performed in several of the methods available use this minimizer. This means that the fits can be tuned using these common options,</p>
@@ -487,14 +500,14 @@
 <p>If you set <code>--X-rtd TMCSO_PseudoAsimov=X</code> with <code>X&gt;0</code> and also turn on <code>--X-rtd TMCSO_AdaptivePseudoAsimov=</code><span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>, with <span class="arithmatex"><span class="MathJax_Preview">\beta&gt;0</span><script type="math/tex">\beta>0</script></span>, the internal logic will be used but this time the default will be to generate Pseudo-Asimov datasets, rather than the normal Asimov ones.</p>
 </div>
 <h4 id="nuisance-parameter-generation">Nuisance parameter generation</h4>
-<p>The default method of dealing with systematics is to generate random values (around their nominal values, see above) for the nuisance parameters, according to their prior pdfs centred around their default values, <em>before</em> generating the data. The <em>unconstrained</em> nuisance parameters (eg <code>flatParam</code> or <code>rateParam</code>) or those with <em>flat</em> priors are <strong>not</strong> randomised before the data generation.</p>
+<p>The default method of dealing with systematics is to generate random values (around their nominal values, see above) for the nuisance parameters, according to their prior pdfs centred around their default values, <em>before</em> generating the data. The <em>unconstrained</em> nuisance parameters (eg <code>flatParam</code> or <code>rateParam</code>) or those with <em>flat</em> priors are <strong>not</strong> randomised before the data generation. If you wish to also randomise these parameters, you <strong>must</strong> declare these as <code>flatParam</code> in your datacard and when running text2workspace you must add the option <code>--X-assign-flatParam-prior</code> in the command line.</p>
 <p>The following are options which define how the toys will be generated,</p>
 <ul>
 <li>
 <p><code>--toysNoSystematics</code> the nuisance parameters in each toy are <em>not</em> randomised when generating the toy datasets - i.e their nominal values are used to generate the data. Note that for methods which profile (fit) the nuisances, the parameters are still floating when evaluating the likelihood.</p>
 </li>
 <li>
-<p><code>--toysFrequentist</code> the nuisance parameters in each toy are set to their nominal values which are obtained <em>after fitting first to the data</em>, with POIs fixed, before generating the data. For evaluating likelihoods, the constraint terms are instead randomised within their Gaussian constraint pdfs around the post-fit nuisance parameter values.</p>
+<p><code>--toysFrequentist</code> the nuisance parameters in each toy are set to their nominal values which are obtained <em>after fitting first to the data</em>, with POIs fixed, before generating the data. For evaluating likelihoods, the constraint terms are instead randomised within their pdfs around the post-fit nuisance parameter values.</p>
 </li>
 </ul>
 <p>If you are using <code>toysFrequentist</code>, be aware that the values set by <code>--setParameters</code> will be <em>ignored</em> for the toy generation as the <em>post-fit</em> values will instead be used (except for any parameter which is also a parameter of interest). You can override this behaviour and choose the nominal values for toy generation for any parameter by adding the option <code>--bypassFrequentistFit</code> which will skip the initial fit to data or by loading a snapshot (see below).</p>
@@ -554,7 +567,7 @@
 <p>In this example we will use the <code>HybridNew</code> method of combine to determine an upper limit for a sub-channel of the Run 1 SM <span class="arithmatex"><span class="MathJax_Preview">H\rightarrow\tau\tau</span><script type="math/tex">H\rightarrow\tau\tau</script></span> analysis. For full documentation, see the section on <a href="http://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/part3/commonstatsmethods/#computing-limits-with-toys">computing limits with toys</a>.</p>
 <p>With this model it would take too long to find the limit in one go, so instead we create a set of jobs in which each one throws toys and builds up the test statistic distributions for a fixed value of the signal strength. These jobs can then be submitted to a batch system or to the Grid using <code>crab3</code>. From the set of output distributions it is possible to extract the expected and observed limits.</p>
 <p>For this we will use <code>combineTool.py</code></p>
-<p>First we need to build a workspace from the <a href="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/blob/81x-root606-integration/data/tutorials/htt/125/htt_tt.txt"><span class="arithmatex"><span class="MathJax_Preview">H\rightarrow\tau\tau</span><script type="math/tex">H\rightarrow\tau\tau</script></span> datacard</a>,</p>
+<p>First we need to build a workspace from the <a href="https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/blob/main/data/tutorials/htt/125/htt_tt.txt"><span class="arithmatex"><span class="MathJax_Preview">H\rightarrow\tau\tau</span><script type="math/tex">H\rightarrow\tau\tau</script></span> datacard</a>,</p>
 <pre><code class="language-sh">$ text2workspace.py data/tutorials/htt/125/htt_mt.txt -m 125
 $ mv data/tutorials/htt/125/htt_mt.root ./
 </code></pre>
@@ -582,8 +595,8 @@ Expected 97.5%: r &lt; 1.7200
 </code></pre>
 <p>When the <code>--dry-run</code> option is removed each command will be run in sequence.</p>
 <h4 id="grid-submission">Grid submission</h4>
-<p>Submission to the grid with <code>crab3</code> works in a similar way. Before doing so ensure that the <code>crab3</code> environment has been sourced, then for compatibility reasons source the CMSSW environment again. We will use the example of generating a grid of test-statistic distributions for limits.</p>
-<pre><code class="language-sh">$ source /cvmfs/cms.cern.ch/crab3/crab.sh; cmsenv
+<p>Submission to the grid with <code>crab3</code> works in a similar way. Before doing so ensure that the <code>crab3</code> environment has been sourced in addition to the  CMSSW environment. We will use the example of generating a grid of test-statistic distributions for limits.</p>
+<pre><code class="language-sh">$ cmsenv; source /cvmfs/cms.cern.ch/crab3/crab.sh
 $ combineTool.py -d htt_mt.root -M HybridNew --LHCmode LHC-limits --clsAcc 0 -T 2000 -s -1 --singlePoint 0.2:2.0:0.05 --saveToys --saveHybridResult -m 125 --job-mode crab3 --task-name grid-test --custom-crab custom_crab.py
 </code></pre>
 <p>The option <code>--custom-crab</code> should point to a python file python containing a function of the form <code>custom_crab(config)</code> that will be used to modify the default crab configuration. You can use this to set the output site to your local grid site, or modify other options such as the voRole, or the site blacklist/whitelist.</p>
