@@ -77,6 +77,15 @@ class PhysicsModelBase_NiceSubclasses(PhysicsModelBase):
         Better error checking: instead of overriding this one, override processPhysicsOptions.
         It should remove each physicsOption from the list after processing it.
         """
+        for po in physOptions[:]: # look for JSON file with list of options
+            if po.startswith("json="):
+                import json
+                fname = po.split('=')[1]
+                with open(fname,'r') as file:
+                    newoptions = json.load(file)
+                    for newpo in newoptions: # assume simple list
+                        physOptions.append(newpo) # add for later processing
+                physOptions.remove(po)
         processed = self.processPhysicsOptions(physOptions)
         processed = set(processed)  # remove duplicates
         for _ in processed:
