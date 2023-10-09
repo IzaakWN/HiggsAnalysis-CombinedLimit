@@ -78,12 +78,16 @@ class PhysicsModelBase_NiceSubclasses(PhysicsModelBase):
         It should remove each physicsOption from the list after processing it.
         """
         for po in physOptions[:]: # look for JSON file with list of options
-            if po.startswith("json="):
+            if po.startswith("json="): # e.g. json=physOpts.json or json=physOpts.json:key
                 import json
                 fname = po.split('=')[1]
+                if ':' in po: # assume json contains dictionary of lists of physics options
+                  fname, key = fname.split(':')[:2]
+                else: # assume json contains plain list of physics options
+                  key = None
                 with open(fname,'r') as file:
-                    newoptions = json.load(file)
-                    for newpo in newoptions: # assume simple list
+                    newoptions = json.load(file) if key==None else json.load(file)[key]
+                    for newpo in newoptions: # assume simple list of physics options
                         physOptions.append(newpo) # add for later processing
                 physOptions.remove(po)
         processed = self.processPhysicsOptions(physOptions)
