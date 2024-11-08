@@ -168,6 +168,7 @@ def addDatacardParserOptions(parser):
     )
     parser.add_option(
         "--scale-rate",
+        metavar="'[BIN/]PROCES=NUMBER[,...]'",
         dest="scaleRates",
         type="string",
         help="Scale the rate of processes in comma-separated list with syntax '[<bin>/]<process>=<number>'. Accepts regexp, e.g. '.*/ggH_[78]TeV=0.5'",
