@@ -379,16 +379,16 @@ def parseCard(file, options):
     # parse scale factors for process rates
     if not hasattr(options, "scaleRates") or not options.scaleRates:
         setattr(options, "scaleRates", {})
-    elif isinstance(options.scaleRates,str):
+    elif isinstance(options.scaleRates, str):
         sfexps = options.scaleRates.split(",")
         options.scaleRates = {}
         for sfexp in sfexps:
             assert sfexp.count("=") == 1, "Process %r does not fit [<bin>/]<process>=<number> syntax!" % (sfexp)
             proc, sf = sfexp.split("=")
             assert proc.count("/") <= 1, "Process %r in %r does not fit [<bin>/]<process>=<number> syntax!" % (proc, sfexp)
-            b, p = proc.split("/") if proc.count("/") == 1 else (".*", proc) # split label into bin & process
-            key = (re.compile(b), re.compile(p)) # convert to regular expression, e.g. "ch_.*/ggH_201[78]"
-            options.scaleRates[key] = float(eval(sf)) # evaluate string as math expression, and convert to float
+            b, p = proc.split("/") if proc.count("/") == 1 else (".*", proc)  # split label into bin & process
+            key = (re.compile(b), re.compile(p))  # convert to regular expression, e.g. "ch_.*/ggH_201[78]"
+            options.scaleRates[key] = float(eval(sf))  # evaluate string as math expression, and convert to float
 
     try:
         for lineNumber, l in enumerate(file):
